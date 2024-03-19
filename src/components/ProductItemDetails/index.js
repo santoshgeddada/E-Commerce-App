@@ -1,33 +1,37 @@
-import {Component} from 'react'
-import {Link} from 'react-router-dom'
-import Cookies from 'js-cookie'
-import {Circles} from 'react-loader-spinner'
-import {BsPlusSquare, BsDashSquare} from 'react-icons/bs'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { Circles } from 'react-loader-spinner';
+import { BsPlusSquare, BsDashSquare } from 'react-icons/bs';
 
-import CartContext from '../../context/CartContext'
+import CartContext from '../../context/CartContext';
+import withRouter from '../withRouter/withRouter';
 
-import Header from '../Header'
-import SimilarProductItem from '../SimilarProductItem'
+import Header from '../Header';
+import SimilarProductItem from '../SimilarProductItem';
 
-import './index.css'
+import './index.css';
 
 const apiStatusConstants = {
   initial: 'INITIAL',
   success: 'SUCCESS',
   failure: 'FAILURE',
   inProgress: 'IN_PROGRESS',
-}
+};
 
 class ProductItemDetails extends Component {
-  state = {
-    productData: {},
-    similarProductsData: [],
-    apiStatus: apiStatusConstants.initial,
-    quantity: 1,
+  constructor(props) {
+    super(props);
+    this.state = {
+      productData: {},
+      similarProductsData: [],
+      apiStatus: apiStatusConstants.initial,
+      quantity: 1,
+    };
   }
 
   componentDidMount() {
-    this.getProductData()
+    this.getProductData();
   }
 
   getFormattedData = data => ({
@@ -40,49 +44,63 @@ class ProductItemDetails extends Component {
     rating: data.rating,
     title: data.title,
     totalReviews: data.total_reviews,
-  })
+  });
 
   getProductData = async () => {
-    const {match} = this.props
-    const {params} = match
+    // const { id } = this.props.match.params;
+    // const idVar = id.id
+    // console.log(idVar);
+
+    const {router} = this.props 
+    console.log(router)
+    const {params} = router
     const {id} = params
 
     this.setState({
       apiStatus: apiStatusConstants.inProgress,
-    })
-    const jwtToken = Cookies.get('jwt_token')
-    const apiUrl = `https://apis.ccbp.in/products/${id}`
-    const options = {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-      method: 'GET',
-    }
-    const response = await fetch(apiUrl, options)
-    if (response.ok) {
-      const fetchedData = await response.json()
-      const updatedData = this.getFormattedData(fetchedData)
-      const updatedSimilarProductsData = fetchedData.similar_products.map(
-        eachSimilarProduct => this.getFormattedData(eachSimilarProduct),
-      )
-      this.setState({
-        productData: updatedData,
-        similarProductsData: updatedSimilarProductsData,
-        apiStatus: apiStatusConstants.success,
-      })
-    }
-    if (response.status === 404) {
+    });
+
+    try {
+      const jwtToken = Cookies.get('jwt_token');
+      const apiUrl = `https://apis.ccbp.in/products/${id}`;
+      const options = {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        method: 'GET',
+      };
+      const response = await fetch(apiUrl, options);
+      if (response.ok) {
+        const fetchedData = await response.json();
+        const updatedData = this.getFormattedData(fetchedData);
+        const updatedSimilarProductsData = fetchedData.similar_products.map(eachSimilarProduct =>
+          this.getFormattedData(eachSimilarProduct)
+        );
+        this.setState({
+          productData: updatedData,
+          similarProductsData: updatedSimilarProductsData,
+          apiStatus: apiStatusConstants.success,
+        });
+      } else if (response.status === 404) {
+        this.setState({
+          apiStatus: apiStatusConstants.failure,
+        });
+      } else {
+        throw new Error('Failed to fetch product data');
+      }
+    } catch (error) {
+      console.error('Error fetching product data:', error);
       this.setState({
         apiStatus: apiStatusConstants.failure,
-      })
+      });
     }
-  }
+  };
 
   renderLoadingView = () => (
     <div className="products-details-loader-container" data-testid="loader">
       <Circles type="ThreeDots" color="#0b69ff" height="50" width="50" />
     </div>
-  )
+  );
 
   renderFailureView = () => (
     <div className="product-details-error-view-container">
@@ -98,23 +116,23 @@ class ProductItemDetails extends Component {
         </button>
       </Link>
     </div>
-  )
+  );
 
   onDecrementQuantity = () => {
-    const {quantity} = this.state
+    const { quantity } = this.state;
     if (quantity > 1) {
-      this.setState(prevState => ({quantity: prevState.quantity - 1}))
+      this.setState(prevState => ({ quantity: prevState.quantity - 1 }));
     }
-  }
+  };
 
   onIncrementQuantity = () => {
-    this.setState(prevState => ({quantity: prevState.quantity + 1}))
-  }
+    this.setState(prevState => ({ quantity: prevState.quantity + 1 }));
+  };
 
   renderProductDetailsView = () => (
     <CartContext.Consumer>
       {value => {
-        const {productData, quantity, similarProductsData} = this.state
+        const { productData, quantity, similarProductsData } = this.state;
         const {
           availability,
           brand,
@@ -125,20 +143,18 @@ class ProductItemDetails extends Component {
           title,
           totalReviews,
           id,
-        } = productData
-        const {addCartItem, cartList, incrementCartItemQuantity} = value
+        } = productData;
+        const { addCartItem, cartList, incrementCartItemQuantity } = value;
 
         const onClickAddToCart = () => {
-          const productItem = cartList.find(
-            eachProduct => id === eachProduct.id,
-          )
-          console.log(productItem)
+          const productItem = cartList.find(eachProduct => id === eachProduct.id);
+          console.log(productItem);
           if (productItem === undefined) {
-            addCartItem({...productData, quantity})
+            addCartItem({ ...productData, quantity });
           } else {
-            incrementCartItemQuantity(id, quantity)
+            incrementCartItemQuantity(id, quantity);
           }
-        }
+        };
 
         return (
           <div className="product-details-success-view">
@@ -208,25 +224,25 @@ class ProductItemDetails extends Component {
               ))}
             </ul>
           </div>
-        )
+        );
       }}
     </CartContext.Consumer>
-  )
+  );
 
   renderProductDetails = () => {
-    const {apiStatus} = this.state
+    const { apiStatus } = this.state;
 
     switch (apiStatus) {
       case apiStatusConstants.success:
-        return this.renderProductDetailsView()
+        return this.renderProductDetailsView();
       case apiStatusConstants.failure:
-        return this.renderFailureView()
+        return this.renderFailureView();
       case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
+        return this.renderLoadingView();
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   render() {
     return (
@@ -236,8 +252,8 @@ class ProductItemDetails extends Component {
           {this.renderProductDetails()}
         </div>
       </>
-    )
+    );
   }
 }
 
-export default ProductItemDetails
+export default withRouter(ProductItemDetails);

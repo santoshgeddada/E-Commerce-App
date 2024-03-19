@@ -1,5 +1,5 @@
 import {Component} from 'react'
-import {Route, Routes,Navigate} from 'react-router-dom'
+import {Route, Routes,Navigate, BrowserRouter} from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
 import Home from './components/Home'
@@ -79,21 +79,25 @@ class App extends Component {
           decrementCartItemQuantity: this.decrementCartItemQuantity,
         }}
       >
+        
         <ErrorBoundary>
+          <BrowserRouter>
           <Routes>
             <Route exact path="/login" element={<LoginForm/>} />
-            <ProtectedRoute exact path="/" element={<Home/>} />
-            <ProtectedRoute exact path="/products" element={<Products/>} />
-            <ProtectedRoute
+            <Route exact path="/" element={<Home/>} />
+            <Route exact path="/products" element={<Products/>} />
+            <Route
               exact
               path="/products/:id"
               element={<ProductItemDetails/>}
             />
-            <ProtectedRoute exact path="/cart" element={<Cart/>} />
+            <Route exact path="/cart" element={<Cart/>} />
             <Route path="/not-found" element={<NotFound/>} />
-            <Navigate to="not-found" />
+            {/* <Navigate to="not-found" /> */}
           </Routes>
+          </BrowserRouter>
         </ErrorBoundary>
+        
       </CartContext.Provider>
     )
   }

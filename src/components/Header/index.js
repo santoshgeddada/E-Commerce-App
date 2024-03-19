@@ -37,9 +37,9 @@ const Header = props => {
     </CartContext.Consumer>
   )
 
-  const {match} = props
-  const {path} = match
-  console.log(path)
+  const {params} = props.router
+  const {path} = params
+  // console.log(params)
 
   const homeClass = path === tabConstants.home ? 'active-tab' : ''
   const productsClass = path === tabConstants.products ? 'active-tab' : ''
