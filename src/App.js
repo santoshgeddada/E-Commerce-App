@@ -1,5 +1,5 @@
 import {Component} from 'react'
-import {Route, Routes,Navigate, BrowserRouter} from 'react-router-dom'
+import {Route, Routes, BrowserRouter, Navigate} from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
 import Home from './components/Home'
@@ -91,9 +91,8 @@ class App extends Component {
               path="/products/:id"
               element={<ProductItemDetails/>}
             />
-            <Route exact path="/cart" element={<Cart/>} />
-            <Route path="/not-found" element={<NotFound/>} />
-            {/* <Navigate to="not-found" /> */}
+            <Route exact path="/cart" element={<Cart/>}/>
+            <Route path="*" element={<NotFound/>} />
           </Routes>
           </BrowserRouter>
         </ErrorBoundary>

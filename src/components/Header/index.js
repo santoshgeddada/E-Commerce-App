@@ -14,10 +14,11 @@ const tabConstants = {
 }
 
 const Header = props => {
+  console.log(props)
   const onClickLogout = () => {
-    const {history} = props
+    const {navigate} = props.router
     Cookies.remove('jwt_token')
-    history.replace('/login')
+    navigate('/login')
   }
 
   const renderCartItemsCount = () => (

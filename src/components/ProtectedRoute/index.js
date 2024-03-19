@@ -24,14 +24,17 @@ import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import Cookie from 'js-cookie';
 
-const ProtectedRoute = ({ element: Element, ...rest }) => {
+const ProtectedRoute = (props) => {
+
+  const {element} = props
+  console.log(element)
   const token = Cookie.get('jwt_token');
   const isAuthenticated = !!token; // Convert token existence to boolean
 
   return (
     <Route
-      {...rest}
-      element={isAuthenticated ? <Element /> : <Navigate to="/login" replace />}
+      element={<element/>}
+      // element={isAuthenticated ? element : <Navigate to="/login" replace />}
     />
   );
 }

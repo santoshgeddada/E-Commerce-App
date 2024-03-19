@@ -10,9 +10,12 @@ class ErrorBoundary extends Component {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
-  }
+  // componentDidCatch(error, errorInfo) {
+  //   if (error){console.error('Error caught by ErrorBoundary:', error, errorInfo)}
+  //   else{
+  //     console.log("no error")
+  //   };
+  // }
 
   render() {
     if (this.state.hasError) {
