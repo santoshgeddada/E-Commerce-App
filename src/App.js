@@ -1,5 +1,5 @@
 import {Component} from 'react'
-import {Route, Routes, BrowserRouter, Navigate} from 'react-router-dom'
+import {Route, Routes, BrowserRouter} from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
 import Home from './components/Home'
@@ -82,18 +82,20 @@ class App extends Component {
         
         <ErrorBoundary>
           <BrowserRouter>
-          <Routes>
-            <Route exact path="/login" element={<LoginForm/>} />
-            <Route exact path="/" element={<Home/>} />
-            <Route exact path="/products" element={<Products/>} />
-            <Route
-              exact
-              path="/products/:id"
-              element={<ProductItemDetails/>}
-            />
-            <Route exact path="/cart" element={<Cart/>}/>
-            <Route path="*" element={<NotFound/>} />
-          </Routes>
+            <>
+              <Routes>
+                  <Route exact path="/login" element={<LoginForm/>} />
+                  <Route exact path="/" element={<ProtectedRoute><Home/></ProtectedRoute>} />
+                  <Route exact path="/products" element={<ProtectedRoute><Products/></ProtectedRoute>} />
+                  <Route
+                    exact
+                    path="/products/:id"
+                    element={<ProtectedRoute><ProductItemDetails/></ProtectedRoute>}
+                  />
+                  <Route exact path="/cart" element={<ProtectedRoute><Cart/></ProtectedRoute>}/>
+                  <Route path="*" element={<NotFound/>} />
+              </Routes>
+            </>
           </BrowserRouter>
         </ErrorBoundary>
         
