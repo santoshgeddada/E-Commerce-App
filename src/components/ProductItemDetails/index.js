@@ -11,6 +11,8 @@ import Header from '../Header';
 import SimilarProductItem from '../SimilarProductItem';
 
 import './index.css';
+import { connect } from 'react-redux';
+import { addItem } from '../redux/actions';
 
 const apiStatusConstants = {
   initial: 'INITIAL',
@@ -52,7 +54,6 @@ class ProductItemDetails extends Component {
     // console.log(idVar);
 
     const {router} = this.props 
-    console.log(router)
     const {params} = router
     const {id} = params
 
@@ -148,7 +149,9 @@ class ProductItemDetails extends Component {
 
         const onClickAddToCart = () => {
           const productItem = cartList.find(eachProduct => id === eachProduct.id);
-          console.log(productItem);
+          const tempFun = this.props.addItem
+          tempFun("hello")
+          console.log(this.props)
           if (productItem === undefined) {
             addCartItem({ ...productData, quantity });
           } else {
@@ -256,4 +259,16 @@ class ProductItemDetails extends Component {
   }
 }
 
-export default withRouter(ProductItemDetails);
+const mapStateToProps = state =>{
+  return {
+    cartItems: state.cartItems
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return {
+    addItem: ()=>dispatch(addItem())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ProductItemDetails));
