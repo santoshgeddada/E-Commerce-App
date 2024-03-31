@@ -1,5 +1,6 @@
 import {Component} from 'react'
 import {Route, Routes, BrowserRouter} from 'react-router-dom'
+import {Provider} from "react-redux"
 
 import LoginForm from './components/LoginForm'
 import Home from './components/Home'
@@ -12,6 +13,8 @@ import CartContext from './context/CartContext'
 import ErrorBoundary from './components/ErrorBoundary'
 
 import './App.css'
+import store from './components/redux/store'
+// import store from './components/redux/store'
 
 class App extends Component {
   state = {
@@ -69,6 +72,7 @@ class App extends Component {
     const {cartList} = this.state
 
     return (
+      <Provider store={store}>
       <CartContext.Provider
         value={{
           cartList,
@@ -79,7 +83,6 @@ class App extends Component {
           decrementCartItemQuantity: this.decrementCartItemQuantity,
         }}
       >
-        
         <ErrorBoundary>
           <BrowserRouter>
             <>
@@ -98,8 +101,8 @@ class App extends Component {
             </>
           </BrowserRouter>
         </ErrorBoundary>
-        
       </CartContext.Provider>
+      </Provider>
     )
   }
 }
